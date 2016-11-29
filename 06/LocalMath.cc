@@ -9,3 +9,11 @@ int fact(int val)
 
   return ret;			// return the result
 }
+
+// calculate val!, which is 1*2*3...*val
+int factorial(int val)
+{
+  if (val > 1)
+    return factorial(val-1) * val;
+  return 1;
+}
