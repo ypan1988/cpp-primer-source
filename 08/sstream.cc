@@ -1,11 +1,15 @@
 #include <iostream>
-using std::cin; using std::cout; using std::cerr;
+using std::cin; using std::cout; using std::endl; using std::cerr;
+using std::istream; using std::ostream;
 
 #include <string>
 using std::string;
 
 #include <vector>
 using std::vector;
+
+#include <sstream>
+using std::istringstream; using std::ostringstream;
 
 // members are public by default
 struct PersonInfo {
@@ -19,7 +23,7 @@ string format(const string &s) { return s; }
 
 // we'll see how to validate phone numbers in Chapter 17
 // for now just return true
-bool valid(cosnt string &s) { return true; }
+bool valid(const string &s) { return true; }
 
 vector<PersonInfo>
 getData(istream &is) 
@@ -56,17 +60,19 @@ ostream& process(ostream &os, vector<PersonInfo> people)
       }
     }
     if (badNums.str().empty())	// there were no bad numbers
-      os << entry.names << " "	// print the name
+      os << entry.name << " "	// print the name
 	 << formatted.str() << endl; // and reformatted numbers
     else
       cerr << "input error: " << entry.name
 	   << " invalid number(s) " << badNums.str() << endl;
   }
     
-    return os;
-  }
+  return os;
+}
 
-    int main()
-    {
-    process(cout, getData(cin));
-  }
+int main()
+{
+  process(cout, getData(cin));
+
+  return 0;
+}
