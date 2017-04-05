@@ -26,7 +26,7 @@ string format(const string &s) { return s; }
 bool valid(const string &s) { return true; }
 
 vector<PersonInfo>
-getData(istream &is) 
+getData(istream &is)
 {
   // will hold a line and word from input, respectively
   string line, word;
@@ -53,20 +53,20 @@ ostream& process(ostream &os, vector<PersonInfo> people)
     ostringstream formatted, badNums; // objects created on each loop
     for (const auto &nums : entry.phones) { // for each number
       if (!valid(nums)) {
-	badNums << " " << nums;	// string in badNums
+        badNums << " " << nums;	// string in badNums
       } else {
-	// "writes" to formatted's string
-	formatted << " " << format(nums);
+        // "writes" to formatted's string
+        formatted << " " << format(nums);
       }
     }
     if (badNums.str().empty())	// there were no bad numbers
       os << entry.name << " "	// print the name
-	 << formatted.str() << endl; // and reformatted numbers
+         << formatted.str() << endl; // and reformatted numbers
     else
       cerr << "input error: " << entry.name
-	   << " invalid number(s) " << badNums.str() << endl;
+           << " invalid number(s) " << badNums.str() << endl;
   }
-    
+
   return os;
 }
 
