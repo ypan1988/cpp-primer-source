@@ -20,7 +20,7 @@ class TextQuery {
   std::shared_ptr<std::vector<std::string>> file; // input file
   // map each word to the set of the lines in which that word appears
   std::map<std::string,
-    std::shared_ptr<std::set<line_no>>> wn;
+    std::shared_ptr<std::set<line_no>>> wm;
 
   // canonicalizes text: removes punctuation and makes everything lower case
   static std::string cleanup_str(const std::string&);

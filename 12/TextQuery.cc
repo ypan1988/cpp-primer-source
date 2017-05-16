@@ -1,4 +1,5 @@
 #include "TextQuery.h"
+#include "QueryResult.h"
 
 #include <cctype>
 using std::ispunct; using std::tolower;
@@ -40,7 +41,7 @@ TextQuery::TextQuery(ifstream &is): file(new vector<string>)
       auto &lines = wm[word];   // lines is a shared_ptr
       if (!lines)               // that pointer is null the first time we see word
         lines.reset(new set<line_no>); // allocate a new set
-      lines->intert(n);                // insert this line number
+      lines->insert(n);                // insert this line number
     }
   }
 }
