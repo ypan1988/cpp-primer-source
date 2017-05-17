@@ -1,12 +1,11 @@
 #include "TextQuery.h"
-#include "QueryResult.h"
 
 #include <cctype>
 using std::ispunct; using std::tolower;
 
 #include <iostream>
 using std::cout; using std::endl;
-using std::ostream; 
+using std::ostream;
 
 #include <fstream>
 using std::ifstream;
@@ -67,13 +66,13 @@ TextQuery::query(const string &sought) const
 
   // use find and not a subscript to avoid adding words to wm!
   auto loc = wm.find(cleanup_str(sought));
-  if (loc == wm.end()) 
+  if (loc == wm.end())
     return QueryResult(sought, nodata, file); // not found
-  else 
+  else
     return QueryResult(sought, loc->second, file);
 }
 
-ostream& print(ostream &os, const QueryResult &qr)
+ostream &print(ostream &os, const QueryResult &qr)
 {
   // if the word was found, print the count and all occurrences
   os << qr.sought << " occurs " << qr.lines->size() << " "
@@ -92,7 +91,7 @@ ostream& print(ostream &os, const QueryResult &qr)
 void TextQuery::display_map()
 {
   auto iter = wm.cbegin(), iter_end = wm.cend();
-  
+
   // for each word in the map
   for ( ; iter != iter_end; ++iter) {
     cout << "word: " << iter->first << " {";
@@ -105,11 +104,11 @@ void TextQuery::display_map()
     // print all line numbers for this word
     while (loc_iter != loc_iter_end) {
       cout << *loc_iter;
-      
+
       if (++loc_iter != loc_iter_end)
 	cout << ", ";
     }
-    
+
     cout << "}\n";		// end list of output this word
   }
   cout << endl;			// finished printing entire map
