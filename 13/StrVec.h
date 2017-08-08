@@ -9,11 +9,18 @@ class StrVec {
 public:
   StrVec() : // the allocator member is default initialized
     elements(nullptr), first_free(nullptr), cap(nullptr) {}
-  StrVec(const StrVec&);             // copy construct
-  StrVec& operator=(const StrVec&);  // copy assignment
-  ~StrVec();                         // destructor
+  
+  StrVec(const StrVec&);                // copy construct
+  StrVec& operator=(const StrVec&);     // copy assignment
 
-  void push_back(const std::string&);  // copy the element
+  StrVec(StrVec&&) noexcept;            // move construct
+  StrVec& operator=(StrVec&&) noexcept; // move assignment
+
+  ~StrVec();                            // destructor
+
+  void push_back(const std::string&);   // copy the element
+  void push_back(std::string&&);        // move the element
+
   size_t size() const { return first_free - element; }
   size_t capacity() const { return cap - element; }
   std::string *begin() const { return element; }
@@ -60,6 +67,30 @@ StrVec::StrVec& operator=(const StrVec &rhs)
 }
 
 inline
+StrVec::StrVec(StrVec &&s) noexcept  // move won't throw any exceptions
+// member initializer take over the resource in s
+  : elements(s.elements), first_free(s.first_free), cap(s.cap)
+{
+  // leave s in a state in which it is safe to run the destructor
+  s.elements = s.first_free = s.cap = nullptr;
+}
+
+inline
+StrVec::StrVec& operator=(StrVec &&rhs)
+{
+  // direct test for self-assignment
+  if (this != rhs&) {
+    free();
+    elements = rhs.elements;      // free existing element
+    first_free = rhs.first_free;  // take over resources from rhs
+    cap = rhs.cap;
+    // leave rhs in a destructible state
+    rhs.elements = rhs.first_free = rhs.capacity = nullptr;
+  }
+  return *this;
+}
+
+inline
 StrVec::~StrVec() { free(); }
 
 inline
@@ -68,6 +99,13 @@ void StrVec::push_back(const std::string &s)
   chk_n_alloc();  // ensure that there is room for another element
   // construct a copy of s in the element to which first_free point
   alloc.construct(first_free++, s);
+}
+
+inline
+void push_back(std::string &&s)
+{
+  chk_n_alloc();  // reallocates the StrVec if necessary
+  alloc.construct(first_free++, std::move(s));
 }
 
 inline
