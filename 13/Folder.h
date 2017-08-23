@@ -40,6 +40,29 @@ class Message {
 void swap(Message&, Message&);
 
 class Folder {
+  friend class Message;
+ public:
+  Folder() = default;		    // defaults ok
+  Folder(const Folder&);	    // add new folder to each Message inmsgs
+  Folder& operator=(const Folder&); // delete Folder from lhs messages
+                                    // add Folder to rhs messages
+  Folder(Folder &&);		    // move Messages to this Folder
+  Folder& operator=(Folder&&);	    // delete Folder from lhs messages
+  ~Folder();			    // remove self from Messages in msgs
+
+  void save(Message&);		// add this message to folder
+  void remove(Message&);	// remove this message from this folder
+
+  void debug_print();		// print contents and it's list of Folders
+
+ private:
+  std::set<Message*> msgs;	// messages in this folder
+
+  void add_to_Messages(const Folder&); // add this Folder to each Message
+  void remove_from_Messages();	       // remove this Folder from each Message
+
+  void addMsg(Message *m) { msgs.insert(m); }
+  void remMsg(Message *m) { msgs.erase(m); }
 
 };
 

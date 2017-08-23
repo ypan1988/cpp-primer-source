@@ -24,7 +24,7 @@ int main()
   Message m3(s3);
   Message m4(s4);
   Message m5(s5);
-  Message m5(s6);
+  Message m6(s6);
 
   return 0;
 }

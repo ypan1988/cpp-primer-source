@@ -4,7 +4,7 @@ void swap(Message &lhs, Message &rhs)
 {
   using std::swap;              // not strictly needed in this case, but good habit
   // remove pointers to each Message from their (original) respective Folders
-  for (auto f: lsh.folders)
+  for (auto f: lhs.folders)
     f->remMsg(&lhs);
   for (auto f: rhs.folders)
     f->remMsg(&rhs);
