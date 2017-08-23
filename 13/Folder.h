@@ -16,9 +16,9 @@ class Message {
   // copy control to manage pointers to this Message
   Message(const Message&);             // copy constructor
   Message& operator=(const Message&);  // copy assignment
-  ~Message();                          // destructor
   Message(Message&&);                  // move constructor
   Message& operator=(Message&&);       // move assignment
+  ~Message();                          // destructor
 
   // add/remove this Message from the specified Folder's set of messages
   void save(Folder&);

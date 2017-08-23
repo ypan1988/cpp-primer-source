@@ -62,5 +62,4 @@ void Message::remove_from_Folders()
 {
   for (auto f : folders)        // for each pointer in folders
     f->remMsg(this);            // remove this Message
-  folders.clear();              // no Folder points to this Message
 }
