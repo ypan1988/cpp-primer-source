@@ -21,9 +21,9 @@ public:
   void push_back(const std::string&);   // copy the element
   void push_back(std::string&&);        // move the element
 
-  size_t size() const { return first_free - element; }
-  size_t capacity() const { return cap - element; }
-  std::string *begin() const { return element; }
+  size_t size() const { return first_free - elements; }
+  size_t capacity() const { return cap - elements; }
+  std::string *begin() const { return elements; }
   std::string *end() const { return first_free; }
 
 private:
@@ -56,7 +56,7 @@ StrVec::StrVec(const StrVec &s)
 }
 
 inline
-StrVec::StrVec& operator=(const StrVec &rhs)
+StrVec& StrVec::operator=(const StrVec &rhs)
 {
   // call alloc_n_copy to allocate exactly as many elements as in rhs
   auto data = alloc_n_copy(rhs.begin(), rhs.end());
@@ -76,16 +76,16 @@ StrVec::StrVec(StrVec &&s) noexcept  // move won't throw any exceptions
 }
 
 inline
-StrVec::StrVec& operator=(StrVec &&rhs)
+StrVec& StrVec::operator=(StrVec &&rhs) noexcept
 {
   // direct test for self-assignment
-  if (this != rhs&) {
+  if (this != &rhs) {
     free();
     elements = rhs.elements;      // free existing element
     first_free = rhs.first_free;  // take over resources from rhs
     cap = rhs.cap;
     // leave rhs in a destructible state
-    rhs.elements = rhs.first_free = rhs.capacity = nullptr;
+    rhs.elements = rhs.first_free = rhs.cap = nullptr;
   }
   return *this;
 }
@@ -102,7 +102,7 @@ void StrVec::push_back(const std::string &s)
 }
 
 inline
-void push_back(std::string &&s)
+void StrVec::push_back(std::string &&s)
 {
   chk_n_alloc();  // reallocates the StrVec if necessary
   alloc.construct(first_free++, std::move(s));
