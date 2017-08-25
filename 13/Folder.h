@@ -30,16 +30,22 @@ class Message {
   std::set<Folder*> folders;    // Folders that have this Message
 
   // utility functions used by copy constructor, assignment, and destructor
+
   // add this Message to the Folders that point to the parameter
   void add_to_Folders(const Message&);
   // remove this Message from every Folder in folders
   void remove_from_Folders();
-};
+  void move_Folders(Message*);
 
+  // used by Folder class to add self to this Message's set of Folder's
+  void addFldr(Folder *f) { folders.insert(f); }
+  void remFldr(Folder *f) { folders.erase(f); }
+};
 // declaration for swap should be in the same header as Message itself
 void swap(Message&, Message&);
 
 class Folder {
+  friend void swap(Message&, Message&);
   friend class Message;
  public:
   Folder() = default;		    // defaults ok
@@ -52,7 +58,6 @@ class Folder {
 
   void save(Message&);		// add this message to folder
   void remove(Message&);	// remove this message from this folder
-
   void debug_print();		// print contents and it's list of Folders
 
  private:
@@ -60,10 +65,10 @@ class Folder {
 
   void add_to_Messages(const Folder&); // add this Folder to each Message
   void remove_from_Messages();	       // remove this Folder from each Message
-
+  void move_Messages(Folder*);         // move Message pointers to point to this Folder
+  
   void addMsg(Message *m) { msgs.insert(m); }
   void remMsg(Message *m) { msgs.erase(m); }
-
 };
 
 #endif
