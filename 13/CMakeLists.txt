@@ -1,3 +1,4 @@
 PROJECT (CP13)
-SET (CMAKE_CXX_STANDARD 11)
-ADD_EXECUTABLE(folder FolderMain.cc Folder.cc)
+set (CMAKE_CXX_STANDARD 11)
+add_executable(folder FolderMain.cc Folder.cc)
+add_executable(useStrVec useStrVec.cc)

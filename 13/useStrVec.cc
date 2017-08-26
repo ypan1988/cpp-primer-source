@@ -28,11 +28,11 @@ StrVec getVec(istream &is)
 int main()
 {
     // we'll call getVec a couple of times
-	// and will read the same file each time
-	ifstream in("data/storyDataFile");
-	StrVec svec = getVec(in);
-	print(svec);
-	in.close();
+    // and will read the same file each time
+    ifstream in("../data/storyDataFile");
+    StrVec svec = getVec(in);
+    print(svec);
+    in.close();
 
     return 0;
 }
