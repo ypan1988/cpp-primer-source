@@ -1,0 +1,3 @@
+PROJECT (CP13)
+SET (CMAKE_CXX_STANDARD 11)
+ADD_EXECUTABLE(folder FolderMain.cc Folder.cc)
