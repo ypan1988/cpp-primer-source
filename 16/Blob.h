@@ -4,8 +4,11 @@
 #include <initializer_list>
 #include <string>
 #include <vector>
+#include <memory>
 
+template <typename T> class BlobPtr;
 template <typename T> class Blob {
+  friend class BlobPtr<T>;
  public:
   typedef T value_type;
   typedef typename std::vector<T>::size_type size_type;
@@ -27,6 +30,10 @@ template <typename T> class Blob {
   T& back();
   T& operator[](size_type i);
 
+  // return BlobPtr to the first and one past the last element
+  BlobPtr<T> begin() { return BlobPtr<T>(*this); }
+  BlobPtr<T> end() { return BlobPtr<T>(*this, data->size()); }
+
  private:
   std::shared_ptr<std::vector<T>> data;
 
@@ -41,7 +48,7 @@ template <typename T>
 Blob<T>::Blob(std::initializer_list<T> il):
 data(std::make_shared<std::vector<T>>(il)) { }
 
-tenplate <typename T>
+template <typename T>
 void Blob<T>::pop_back()
 {
   check(0, "pop_back on empty Blob");
@@ -71,9 +78,13 @@ void Blob<T>::check(size_type i, const std::string &msg) const
     throw std::out_of_range(msg);
 }
 
+template <typename T>
+bool operator==(const BlobPtr<T>&, const BlobPtr<T>&);
+
 // BlobPtr throws an exception an attempts to access a nonexistent element
 template <typename T> class BlobPtr
 {
+  friend bool operator==<T>(const BlobPtr<T>&, const BlobPtr<T>&);
  public:
  BlobPtr(): curr(0) { }
  BlobPtr(Blob<T> &a, size_t sz = 0): wptr(a.data), curr(sz) { }
@@ -91,12 +102,26 @@ template <typename T> class BlobPtr
 
  private:
   // check returns a shared_ptr to the vector if the check succeeds
-  std::shared_ptr<std::vecotr<T>>
-    check(size::size_t, const std::string &msg) const;
+  std::shared_ptr<std::vector<T>>
+    check(std::size_t, const std::string &msg) const;
   // store a weak_ptr, which means the underlying vector might be destroyed
   std::weak_ptr<std::vector<T>> wptr;
   std::size_t curr;		// current position within the array
 };
+
+// equality operators
+template <typename T>
+bool operator==(const BlobPtr<T> &lhs, const BlobPtr<T> &rhs)
+{
+  return lhs.wptr.lock().get() == rhs.wptr.lock().get() &&
+         lhs.curr == rhs.curr;
+}
+
+template <typename T>
+bool operator!=(const BlobPtr<T> &lhs, const BlobPtr<T> &rhs)
+{
+  return !(lhs == rhs);
+}
 
 // prefix: return a reference to the incremented/decremented object
 template <typename T>
@@ -113,7 +138,7 @@ BlobPtr<T>& BlobPtr<T>::operator--()
 {
   // if curr is zero, decrementing it will yield an invalid subscript
   --curr;			// move the current state back one element
-  check(-1, "decrement past begin of BlobPtr");
+  check(curr, "decrement past begin of BlobPtr");
   return *this;
 }
 
@@ -128,12 +153,24 @@ BlobPtr<T> BlobPtr<T>::operator++(int)
 }
 
 template <typename T>
-BlobPtr<T> BlobPtr<T>::operator++(int)
+BlobPtr<T> BlobPtr<T>::operator--(int)
 {
   // no check needed here; the call to prefix decrement will do the check
   BlobPtr ret = *this;		// save the current value
   --*this;			// move backward one element; prefix -- checks the increment
   return ret;			// return the saved state
+}
+
+
+// check member
+template <typename T>
+std::shared_ptr<std::vector<T>>
+BlobPtr<T>::check(std::size_t i, const std::string &msg) const
+{
+  auto ret = wptr.lock();  // is the vector still around?
+  if (!ret) throw std::runtime_error("unbound BlobPtr");
+  if (i >= ret->size()) throw std::out_of_range(msg);
+  return ret;  // otherwise, return a shared_ptr to the vector
 }
 
 #endif // BLOB_H_
